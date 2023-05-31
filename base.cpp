@@ -118,8 +118,7 @@ bool base::redefin_head(base *p_new_head_obj){
     }
     for (int i = 0; i < p_head_obj->subordinate_objs.size(); i++){
         if (p_head_obj->subordinate_objs[i] == this) {
-            p_head_obj->subordinate_objs.erase(p_head_obj-
-                                               >subordinate_objs.begin() + i);
+            p_head_obj->subordinate_objs.erase(p_head_obj->subordinate_objs.begin() + i);
             break;
         }
     }
@@ -219,8 +218,7 @@ void base::emit_sign(TYPE_SIGNAL p_signal, string s_comm){
     base* p_obj;
     (this->* p_signal)(s_comm);
     for (int i = 0; i < connects.size(); i++) {
-        if ((connects[i]->p_signal == p_signal) && (connects[i]->base_obj-
-                                                    >mark != 0)){
+        if ((connects[i]->p_signal == p_signal) && (connects[i]->base_obj->mark != 0)){
             p_handler = connects[i]->p_handler;
             p_obj = connects[i]->base_obj;
             (p_obj->* p_handler)(s_comm);

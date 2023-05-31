@@ -1,6 +1,6 @@
-#include "cl_application.h"
+#include "systemClass.h"
 int main(){
-    cl_application objSystemClass(nullptr);
-    objSystemClass.build_tree_objects();
-    return objSystemClass.exec_app();
+    systemClass objSystemClass(nullptr);
+    objSystemClass.build_tree();
+    return objSystemClass.start_app();
 }
