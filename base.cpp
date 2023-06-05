@@ -10,12 +10,7 @@ base::~base(){
         delete subordinate_objs[i];
     }
 }
-bool base::set_object_name(string s_obj_name){
-    if (p_head_obj && (get_subordinate_object(s_obj_name) == p_head_obj))
-        return false;
-    this->s_obj_name = s_obj_name;
-    return true;
-}
+
 string base::get_object_name(){
     return s_obj_name;
 }
@@ -225,16 +220,7 @@ void base::emit_sign(TYPE_SIGNAL p_signal, string s_comm){
         }
     }
 }
-string base::get_abs_obj_coord(){
-    if (!p_head_obj) return "/";
-    string abs_coord = "/" + s_obj_name;
-    base *curr = get_head_object();
-    while (curr->get_head_object()){
-        abs_coord = '/' + curr->get_object_name() + abs_coord;
-        curr = curr->get_head_object();
-    }
-    return abs_coord;
-}
+
 bool base::subordinate_objs_empty(){
     return subordinate_objs.empty();
 }
