@@ -1,10 +1,10 @@
 #include "floorClass.h"
 #include "passengerClass.h"
-floorClass::floorClass(base *p_head_obj, string s_obj_name) :
-        base(p_head_obj, s_obj_name){ cl_num = 3; }
+floorClass::floorClass(cl_base *p_head_obj, string s_obj_name) :
+        cl_base(p_head_obj, s_obj_name){ cl_num = 3; }
 void floorClass::signal(string &mess){ }
 void floorClass::handler(string &mess){
-    if((mess.substr(0, 1) == " ") && (find_obj_by_name(mess.substr(1))->get_head_object()->get_object_name() == this->get_object_name())){
+    if((mess.substr(0, 1) == " ") && (search_by_name(mess.substr(1))->get_head()->get_name() == this->get_name())){
         mess = mess.substr(1);
         floor_passengers.erase(find(floor_passengers.begin(),floor_passengers.end(), find_obj_name_curr(mess)));
     }

@@ -1,5 +1,5 @@
 #include "liftClass.h"
-liftClass::liftClass(base *p_head_obj, string s_obj_name) : base(p_head_obj, s_obj_name){ cl_num = 5; }
+liftClass::liftClass(cl_base *p_head_obj, string s_obj_name) : cl_base(p_head_obj, s_obj_name){ cl_num = 5; }
 void liftClass::signal(string &mess){ }
 void liftClass::handler(string &mess){
     if (mess.substr(0, 10) == "direction="){
@@ -16,7 +16,7 @@ void liftClass::handler(string &mess){
     }
     else if (mess.substr(0, 11) == "delete_pass"){
         mess = mess.substr(12);
-        this->delete_sub(mess);
+        this->delete_subordinate_obj(mess);
     }
 }
 void liftClass::set_capacity(int capacity){

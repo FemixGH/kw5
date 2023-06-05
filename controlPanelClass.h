@@ -1,7 +1,9 @@
 #ifndef __CONTROLPANELCLASS__H
 #define __CONTROLPANELCLASS__H
-#include "base.h"
-class controlPanelClass : public base {
+
+#include <set>
+#include "cl_base.h"
+class controlPanelClass : public cl_base {
 private:
     int lift_capacity;
     int floor_quant;
@@ -18,7 +20,7 @@ private:
 //void next_tact(string mess);
 //void add_passenger(string mess);
 public:
-    controlPanelClass(base *p_head_obj, string s_obj_name ="control_panel_obj");
+    controlPanelClass(cl_base *p_head_obj, string s_obj_name ="control_panel_obj");
     void signal(string &mess);
     void handler(string &mess);
     void set_lift_capacity(int m);

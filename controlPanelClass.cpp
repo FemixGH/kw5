@@ -1,6 +1,6 @@
 #include "controlPanelClass.h"
-controlPanelClass::controlPanelClass(base *p_head_obj, string s_obj_name) :
-        base(p_head_obj, s_obj_name){ cl_num = 4; }
+controlPanelClass::controlPanelClass(cl_base *p_head_obj, string s_obj_name) :
+        cl_base(p_head_obj, s_obj_name){ cl_num = 4; }
 void controlPanelClass::signal(string &mess){ }
 bool controlPanelClass::take_passengers(TYPE_SIGNAL p_signal){
     vector <string> from_floor_to_lift = {};
@@ -9,7 +9,7 @@ bool controlPanelClass::take_passengers(TYPE_SIGNAL p_signal){
         if ((lift_capacity - curr_pass_quant > 0) && ((direction == "none" &&
                                                        curr_pass_quant == 0) || direction == passenger->second[2])){ //
             direction = passenger->second[2];
-            this->emit_sign(p_signal, "change_head " + passenger->first.substr(passenger->first.find(' ') + 1));
+            this->emit_signal(p_signal, "change_head " + passenger->first.substr(passenger->first.find(' ') + 1));
             from_floor_to_lift.push_back(passenger->first);
             lift_passengers.push_back({passenger->first.substr(passenger->first.find(' ') + 1), passenger->second[1]});
             curr_pass_quant++;
@@ -17,8 +17,8 @@ bool controlPanelClass::take_passengers(TYPE_SIGNAL p_signal){
     }
     if(from_floor_to_lift.size() == 0) return false;
     direction = "none";
-    this->emit_sign(p_signal, "direction=none");
-    this->emit_sign(p_signal, "change_num_of_lift_pass " +
+    this->emit_signal(p_signal, "direction=none");
+    this->emit_signal(p_signal, "change_num_of_lift_pass " +
                               to_string(curr_pass_quant));
 //удаление пассажиров из общего массива и заполнение приоритетной очереди
     for (auto pass:from_floor_to_lift){
@@ -49,7 +49,7 @@ void controlPanelClass::handler(string &mess){
         }
         if (none_pass && (curr_pass_quant == 0)){
             direction = "none";
-            this->emit_sign(p_signal, "direction=none");
+            this->emit_signal(p_signal, "direction=none");
             return;
         }
         if(curr_pass_quant == -1){ //если в предыдущем такте при заходе наэтаже остались пассажиры
@@ -64,23 +64,23 @@ void controlPanelClass::handler(string &mess){
         if (curr_pass_quant == 0){ //в лифте нет людей
             if (queue[0] < curr_floor){
                 curr_floor -= 1;
-                this->emit_sign(p_signal, "curr_floor - 1");
+                this->emit_signal(p_signal, "curr_floor - 1");
                 if (direction != "down"){
                     direction = "down";
-                    this->emit_sign(p_signal, "direction=down");
+                    this->emit_signal(p_signal, "direction=down");
                 }
             }
             else if (queue[0] > curr_floor){
                 curr_floor += 1;
-                this->emit_sign(p_signal, "curr_floor + 1");
+                this->emit_signal(p_signal, "curr_floor + 1");
                 if (direction != "up"){
                     direction = "up";
-                    this->emit_sign(p_signal, "direction=up");
+                    this->emit_signal(p_signal, "direction=up");
                 }
             }
             else{
                 direction = "none";
-                this->emit_sign(p_signal, "direction=none");
+                this->emit_signal(p_signal, "direction=none");
                 take_passengers(p_signal);
             }
         }
@@ -103,35 +103,35 @@ void controlPanelClass::handler(string &mess){
             }
             if (nearest_floor < curr_floor){
                 curr_floor -= 1;
-                this->emit_sign(p_signal, "curr_floor - 1");
+                this->emit_signal(p_signal, "curr_floor - 1");
                 if (direction != "down"){
                     direction = "down";
-                    this->emit_sign(p_signal, "direction=down");
+                    this->emit_signal(p_signal, "direction=down");
                 }
             }
             else if (nearest_floor > curr_floor){
                 curr_floor += 1;
-                this->emit_sign(p_signal, "curr_floor + 1");
+                this->emit_signal(p_signal, "curr_floor + 1");
                 if (direction != "up"){
                     direction = "up";
-                    this->emit_sign(p_signal, "direction=up");
+                    this->emit_signal(p_signal, "direction=up");
                 }
             }
             else{
                 direction = "none";
-                this->emit_sign(p_signal, "direction=none");
+                this->emit_signal(p_signal, "direction=none");
 //люди, для которых этот этаж был целевым выходят
                 for(auto pass = lift_passengers.begin(); pass !=
                                                          lift_passengers.end();){
                     if(stoi((*pass)[1]) == curr_floor){
-                        this->emit_sign(p_signal, "delete_pass " +
+                        this->emit_signal(p_signal, "delete_pass " +
                                                   (*pass)[0]);
                         lift_passengers.erase(pass);
                         curr_pass_quant--;
                     }
                     else pass++;
                 }
-                this->emit_sign(p_signal, "change_num_of_lift_pass " +
+                this->emit_signal(p_signal, "change_num_of_lift_pass " +
                                           to_string(curr_pass_quant));
                 priority_queue.erase(priority_queue.find(curr_floor));
 //если на этаже остались люди

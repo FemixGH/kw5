@@ -1,17 +1,17 @@
 #ifndef __SYSTEMCLASS__H
 #define __SYSTEMCLASS__H
-#include "base.h"
+#include "cl_base.h"
 #include "floorClass.h"
-class systemClass : public base{
+class systemClass : public cl_base{
 public:
-    systemClass(base *p_head_obj, string s_obj_name = "modeling_system_obj");
+    systemClass(cl_base *p_head_obj, string s_obj_name = "modeling_system_obj");
     void build_tree();
     int start_app();
     void signal(string &mess);
     void handler(string &mess);
     void set_lift_capacity(int m);
     void set_floor_quant(int n);
-    base *passenger_pointer(string name);
+    cl_base *passenger_pointer(string name);
 private:
     vector <floorClass*> floors;
     string input_data = "";
@@ -20,6 +20,6 @@ private:
     int floors_quant = 0;
     TYPE_SIGNAL get_signal_pointer(int cl_num);
     TYPE_HANDLER get_handler_pointer(int cl_num);
-    void set_conn(base *signal_obj, base *handler_obj);
+    void set_conn(cl_base *signal_obj, cl_base *handler_obj);
 };
 #endif

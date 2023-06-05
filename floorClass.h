@@ -1,13 +1,13 @@
 #ifndef __FLOORCLASS__H
 #define __FLOORCLASS__H
-#include "base.h"
+#include "cl_base.h"
 #include "passengerClass.h"
-class floorClass : public base {
+class floorClass : public cl_base {
 private:
     int floor_num;
     vector<passengerClass *> floor_passengers;
 public:
-    floorClass(base *p_head_obj, string s_obj_name = "Floor");
+    floorClass(cl_base *p_head_obj, string s_obj_name = "Floor");
 
     void signal(string &mess);
 
