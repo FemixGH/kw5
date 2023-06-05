@@ -1,8 +1,8 @@
-#include "controlPanelClass.h"
-controlPanelClass::controlPanelClass(cl_base *p_head_obj, string s_obj_name) :
+#include "control_panel.h"
+control_panel::control_panel(cl_base *p_head_obj, string s_obj_name) :
         cl_base(p_head_obj, s_obj_name){ cl_num = 4; }
-void controlPanelClass::signal(string &mess){ }
-bool controlPanelClass::take_passengers(TYPE_SIGNAL p_signal){
+void control_panel::signal(string &mess){ }
+bool control_panel::take_passengers(TYPE_SIGNAL p_signal){
     vector <string> from_floor_to_lift = {};
     for (auto passenger = all_floor_passengers[curr_floor - 1].begin();
          passenger != all_floor_passengers[curr_floor - 1].end(); passenger++){
@@ -37,9 +37,9 @@ bool controlPanelClass::take_passengers(TYPE_SIGNAL p_signal){
     }
     return true;
 }
-void controlPanelClass::handler(string &mess){
+void control_panel::handler(string &mess){
     if (mess == "next_tact"){
-        TYPE_SIGNAL p_signal = SIGNAL_D(controlPanelClass::signal);
+        TYPE_SIGNAL p_signal = SIGNAL_D(control_panel::signal);
         bool none_pass = true;
         for (auto m:all_floor_passengers){
             if(m.size() != 0){
@@ -160,10 +160,10 @@ void controlPanelClass::handler(string &mess){
         }
     }
 }
-void controlPanelClass::set_lift_capacity(int m){
+void control_panel::set_lift_capacity(int m){
     this -> lift_capacity = m;
 }
-void controlPanelClass::set_floor_quant(int n){
+void control_panel::set_floor_quant(int n){
     this -> floor_quant = n;
     for (int i = 0; i < n; i++){
         all_floor_passengers.push_back({});

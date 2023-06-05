@@ -123,7 +123,8 @@ cl_base* cl_base::find_obj_by_coord(string s_object_path)
             break;
         }
     }
-    if (curr_name == "") {
+    if (curr_name == "")
+    {
         return curr_obj->get_sub_obj(s_object_path.substr(1, s_object_path.size() -
                                                                 1));
     }
@@ -232,25 +233,27 @@ cl_base *cl_base::find_obj_name_curr(string s_obj_name){
     return out_obj;
 }
 
-void cl_base::print_hierarchy_with_mark_of_read(){
-    int tab = -1;
-    cl_base *h_obj = p_head_object;
-    while (h_obj){
-        tab += 1;
-        h_obj = h_obj->get_head();
+void cl_base::get_ready(string name)
+{
+    if (get_name() == name)
+    {
+        if (p_ready != 0)
+        {
+            cout << get_name() << " is ready";
+        }
+        else
+        {
+            cout << get_name() << " is not ready";
+        }
     }
-    cout << "\n";
-    for (int i = 0; i <= tab; i++){
-        cout << " ";
-    }
-    cout << s_name;
-    if (mark == 0) cout << " is not ready";
-    else cout << " is ready";
-    for (auto obj: p_sub_objects){
-        obj->print_hierarchy_with_mark_of_read();
+    else
+    {
+        for (int i = 0; i < p_sub_objects.size(); i++)
+        {
+            return p_sub_objects[i]->get_ready(name);
+        }
     }
 }
-
 bool cl_base::subordinate_objs_empty(){
     return p_sub_objects.empty();
 }

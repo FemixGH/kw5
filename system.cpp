@@ -1,15 +1,15 @@
-#include "systemClass.h"
-#include "inputClass.h"
-#include "controlPanelClass.h"
-#include "liftClass.h"
-#include "outputClass.h"
-#include "floorClass.h"
-#include "passengerClass.h"
+#include "system.h"
+#include "input.h"
+#include "control_panel.h"
+#include "lift.h"
+#include "outputs.h"
+#include "floor.h"
+#include "passenger.h"
 #include "cl_base.h"
-systemClass::systemClass(cl_base *p_head_obj, string s_obj_name) :
+system::system(cl_base *p_head_obj, string s_obj_name) :
         cl_base(p_head_obj, s_obj_name){ cl_num = 1; }
-void systemClass::signal(string &mess){ }
-void systemClass::handler(string &mess){
+void system::signal(string &mess){ }
+void system::handler(string &mess){
     this->input_data = mess;
     if (mess.substr(0, 11) == "change_head"){
         mess = mess.substr(12);
@@ -17,52 +17,52 @@ void systemClass::handler(string &mess){
         search_by_name(mess)->change_head_obj(find_obj_by_coord("/control_panel_obj/lift_obj"));
     }
 }
-TYPE_SIGNAL systemClass::get_signal_pointer(int cl_num){
+TYPE_SIGNAL system::get_signal_pointer(int cl_num){
     switch(cl_num){
         case 1:
-            return SIGNAL_D(systemClass::signal);
+            return SIGNAL_D(system::signal);
         case 2:
-            return SIGNAL_D(inputClass::signal);
+            return SIGNAL_D(input::signal);
         case 3:
-            return SIGNAL_D(floorClass::signal);
+            return SIGNAL_D(floor::signal);
         case 4:
-            return SIGNAL_D(controlPanelClass::signal);
+            return SIGNAL_D(control_panel::signal);
         case 5:
-            return SIGNAL_D(liftClass::signal);
+            return SIGNAL_D(lift::signal);
         case 6:
-            return SIGNAL_D(passengerClass::signal);
+            return SIGNAL_D(passenger::signal);
         case 7:
-            return SIGNAL_D(outputClass::signal);
+            return SIGNAL_D(outputs::signal);
     }
     return nullptr;
 }
-TYPE_HANDLER systemClass::get_handler_pointer(int cl_num){
+TYPE_HANDLER system::get_handler_pointer(int cl_num){
     switch(cl_num){
         case 1:
-            return HANDLER_D(systemClass::handler);
+            return HANDLER_D(system::handler);
         case 2:
-            return HANDLER_D(inputClass::handler);
+            return HANDLER_D(input::handler);
         case 3:
-            return HANDLER_D(floorClass::handler);
+            return HANDLER_D(floor::handler);
         case 4:
-            return HANDLER_D(controlPanelClass::handler);
+            return HANDLER_D(control_panel::handler);
         case 5:
-            return HANDLER_D(liftClass::handler);
+            return HANDLER_D(lift::handler);
         case 6:
-            return HANDLER_D(passengerClass::handler);
+            return HANDLER_D(passenger::handler);
         case 7:
-            return HANDLER_D(outputClass::handler);
+            return HANDLER_D(outputs::handler);
     }
     return nullptr;
 }
-void systemClass::set_conn(cl_base *signal_obj, cl_base *handler_obj){
+void system::set_conn(cl_base *signal_obj, cl_base *handler_obj){
     TYPE_SIGNAL p_signal = get_signal_pointer(signal_obj->cl_num);
     TYPE_HANDLER p_handler = get_handler_pointer(handler_obj->cl_num);
     signal_obj->set_connection(p_signal, handler_obj, p_handler);
 }
-void systemClass::set_lift_capacity(int m){ this->lift_capacity = m; }
-void systemClass::set_floor_quant(int n){ this->floors_quant = n; }
-cl_base *systemClass::passenger_pointer(string name){
+void system::set_lift_capacity(int m){ this->lift_capacity = m; }
+void system::set_floor_q(int n){ this->floors_q = n; }
+cl_base *system::passenger_pointer(string name){
     cl_base *passenger_obj;
     for (auto floor_obj:floors){
         passenger_obj = find_obj_by_coord("/floor_" +
@@ -75,13 +75,13 @@ cl_base *systemClass::passenger_pointer(string name){
     }
     return nullptr;
 }
-void systemClass::build_tree(){
+void system::build_tree(){
     int n, m; //этажность здания(n) вместимость лифта (m)
     TYPE_SIGNAL p_signal = get_signal_pointer(1);
-    new inputClass(this); //объект ввода
-    controlPanelClass *control_panel_class = new controlPanelClass(this);
+    new input(this); //объект ввода
+    control_panel *control_panel_class = new control_panel(this);
 //объект пульта управления
-    new outputClass(this); //объект вывода
+    new outputs(this); //объект вывода
 //установка связи между объектом
 //системы моделирования и объектом чтения
     set_conn(this, find_obj_by_coord("/input_obj"));
@@ -94,13 +94,13 @@ void systemClass::build_tree(){
         n = stoi(input_data.substr(0, input_data.find(' ')));
         m = stoi(input_data.substr(input_data.find(' ')));
         this->set_lift_capacity(m);
-        this->set_floor_quant(n);
+        this->set_floor_q(n);
         control_panel_class->set_lift_capacity(m);
         control_panel_class->set_floor_quant(n);
         this->emit_signal(p_signal, "read");
     }
     for (int i = 1; i <= n; i++){
-        floorClass* floor_obj = new floorClass(this, "floor_" + to_string(i));
+        floor* floor_obj = new floor(this, "floor_" + to_string(i));
         floor_obj->set_floor_num(i);
         floors.push_back(floor_obj);
     }
@@ -112,10 +112,10 @@ void systemClass::build_tree(){
     }
 //установка каких-то связей???
 }
-int systemClass::start_app(){
+int system::start_app(){
     TYPE_SIGNAL p_signal = get_signal_pointer(1);
-    liftClass *lift_obj = new
-            liftClass(find_obj_by_coord("/control_panel_obj")); //объект лифт
+    lift *lift_obj = new
+            lift(find_obj_by_coord("/control_panel_obj")); //объект лифт
     string message;
     set_conn(find_obj_by_coord("/control_panel_obj"),
              find_obj_by_coord("/control_panel_obj/lift_obj"));
@@ -161,7 +161,7 @@ int systemClass::start_app(){
 //ищем в векторе в лифте и в векторах по этажам
         }
         else if(input_data.substr(0, 22) == "Condition on the floor"){
-            floorClass *floor = floors[stoi(input_data.substr(23)) - 1];
+            floor *floor = floors[stoi(input_data.substr(23)) - 1];
             message = input_data + " -up-";
             for (auto passenger:floor->passengers_up_down("up")){
                 message = message + " " + passenger->get_name();
@@ -176,13 +176,13 @@ int systemClass::start_app(){
         }
         else if(input_data.substr(0, 9) == "Passenger"){
             input_data = input_data.substr(10);
-            passengerClass *passenger_obj = nullptr;
+            passenger *passenger_obj = nullptr;
             for (int i = input_data.size(); i > 0 ; i--){
                 if((input_data[i] == ' ') && (i != input_data.size() - 5))
                 {
                     passenger_obj = new
-                            passengerClass(find_obj_by_coord("/floor_" + input_data.substr(0,
-                                                                                                     input_data.find(' '))), input_data.substr(i + 1));
+                            passenger(find_obj_by_coord("/floor_" + input_data.substr(0,
+                                                                                      input_data.find(' '))), input_data.substr(i + 1));
                     input_data = input_data.substr(0, i);
                     break;
                 }
@@ -195,7 +195,7 @@ stoi(input_data.substr(input_data.find(' ') + 1)));
 //подход пассажира на этаж
         }
         else if (input_data == "SHOWTREE"){
-            print_hierarchy_with_mark_of_read();
+            get_ready(input_data);
         }
 //совершение действия соответственно такту
         this->emit_signal(p_signal, "next_tact");
